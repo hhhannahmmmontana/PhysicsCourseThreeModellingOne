@@ -117,7 +117,10 @@ class App(tk.Tk):
         if self.get_mode() == "task1":
             analyticEPsi = AnalyticCounter(ux).count_epsi(levels)
             for i in range(levels):
-                self.ax1.plot(x, analyticEPsi.psi[i] + analyticEPsi.E[i] * k - E[0] * k, linestyle='--', color='white')
+                self.ax1.plot(
+                    x,
+                    analyticEPsi.psi[i] + analyticEPsi.E[i] * k - E[0] * k,
+                    linestyle='--', color='white', label="Аналитическая функция" if i == 0 else None)
 
         self.ax1.set_xlim(0, 1)
         self.ax1.set_ylim(0, None)
@@ -147,13 +150,23 @@ class App(tk.Tk):
         self.recolor_chart(self.fig, self.ax2)
 
     def calculate_psi(self) -> None:
+        if self.fig.legends:
+            for lg in self.fig.legends:
+                lg.remove()
+
         model = Model(self.ux)
         epsi = model.count_psi(levels)
 
         self.calculate_first_chart(self.ux, epsi)
         self.calculate_second_chart(self.ux, epsi)
 
-        self.fig.legend(loc='lower center', ncol=4)
+        legend = self.fig.legend(loc='lower center', ncol=4)
+        legend_frame = legend.get_frame()
+        legend_frame.set_facecolor('#111')
+        legend_frame.set_edgecolor("white")
+        for text in legend.texts:
+            text.set_color('white')
+
         plt.subplots_adjust(bottom=0.2)
         self.canvas.draw()
 
